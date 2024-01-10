@@ -5,7 +5,7 @@ interface AnimationProps {
   children: ReactElement;
   initial?: { opacity: number };
   animate?: { opacity: number };
-  transition?: { duration: number };
+  transition?: { duration: number; delay?: number };
   keyValue?: string;
   className?: string;
 }
