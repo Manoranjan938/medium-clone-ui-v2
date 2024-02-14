@@ -3,9 +3,14 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import "./shared/tailwind.css";
 import MainRouter from "./routes/MainRouter";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <MainRouter />
+    <QueryClientProvider client={queryClient}>
+      <MainRouter />
+    </QueryClientProvider>
   </React.StrictMode>,
 );
