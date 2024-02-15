@@ -8,7 +8,7 @@ import {
   FetchTrendingBlogs,
 } from "../../services/apis/PostsAPIs";
 import {
-  LatestBlogApiResp,
+  // LatestBlogApiResp,
   TrendingBlogApiResp,
 } from "../../shared/types/PostsType";
 
@@ -29,7 +29,7 @@ const HomePage = () => {
 
   useEffect(() => {
     const callAPI = async () => {
-      const data: LatestBlogApiResp = await FetchLatestBlogs({ page: 1 });
+      const data = await FetchLatestBlogs({ page: 1 });
       const trendingData: TrendingBlogApiResp = await FetchTrendingBlogs();
       console.log(data, "latest blogs");
       console.log(trendingData, "trending blogs");
