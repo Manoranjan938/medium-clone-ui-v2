@@ -1,8 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AnimationWrapper from "../../shared/PageAnimation";
 import Loader from "../../components/Loader";
 import NoDataMesasge from "../../components/NoData";
 import InPageNavigation from "../../components/InPageNavigation";
+import {
+  FetchLatestBlogs,
+  FetchTrendingBlogs,
+} from "../../services/apis/PostsAPIs";
+import {
+  LatestBlogApiResp,
+  TrendingBlogApiResp,
+} from "../../shared/types/PostsType";
 
 const HomePage = () => {
   // const [blogs, setBlogs] = useState(null);
@@ -18,6 +26,17 @@ const HomePage = () => {
     "picture",
     "travel",
   ];
+
+  useEffect(() => {
+    const callAPI = async () => {
+      const data: LatestBlogApiResp = await FetchLatestBlogs({ page: 1 });
+      const trendingData: TrendingBlogApiResp = await FetchTrendingBlogs();
+      console.log(data, "latest blogs");
+      console.log(trendingData, "trending blogs");
+    };
+
+    callAPI();
+  }, []);
 
   return (
     <AnimationWrapper>
