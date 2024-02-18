@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export interface LatestBlogApiResp {
   blogs: LatestBlogResponse[];
 }
@@ -43,5 +44,30 @@ export interface TrendingBlogsResponse {
 
 export interface FetchCountRequest {
   countRoute: string;
-  data_to_send: LatestBlogResponse[];
+  data_to_send?: LatestBlogResponse;
+}
+
+export interface FilterPaginationDataType {
+  create_new_array?: boolean;
+  state: LocalBlogStateType;
+  data: LatestBlogResponse[];
+  page: number;
+  countRoute: string;
+  data_to_send?: LatestBlogResponse;
+}
+
+export interface LocalBlogStateType {
+  page: number;
+  results: LatestBlogResponse[];
+  totalDocs: number;
+}
+
+export interface BlogPostCardPropType {
+  content: LatestBlogResponse;
+  author: UserInfo;
+}
+
+export interface LoadMoreDataBtnPropType {
+  state: any;
+  fetchDataFun: any;
 }

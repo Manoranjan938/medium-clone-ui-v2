@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import AnimationWrapper from "../../shared/PageAnimation";
 import Loader from "../../components/Loader";
@@ -5,16 +6,24 @@ import NoDataMesasge from "../../components/NoData";
 import InPageNavigation from "../../components/InPageNavigation";
 import {
   FetchLatestBlogs,
-  FetchTrendingBlogs,
+  // FetchTrendingBlogs,
 } from "../../services/apis/PostsAPIs";
 import {
-  // LatestBlogApiResp,
-  TrendingBlogApiResp,
+  LocalBlogStateType,
+  LatestBlogApiResp,
+  // TrendingBlogApiResp,
+  TrendingBlogsResponse,
 } from "../../shared/types/PostsType";
+import { filterPaginationData } from "../../services/custom/filterPaginationData";
+import BlogPostCard from "./components/BlogPostCard";
 
 const HomePage = () => {
-  // const [blogs, setBlogs] = useState(null);
-  const [trendingBLogs] = useState([]);
+  const [blogs, setBlogs] = useState<LocalBlogStateType>({
+    page: 0,
+    results: [],
+    totalDocs: 0,
+  });
+  const [trendingBLogs] = useState<TrendingBlogsResponse[]>([]);
   const [pageState] = useState("home");
   const categories: string[] = [
     "programming",
@@ -29,10 +38,22 @@ const HomePage = () => {
 
   useEffect(() => {
     const callAPI = async () => {
-      const data = await FetchLatestBlogs({ page: 1 });
-      const trendingData: TrendingBlogApiResp = await FetchTrendingBlogs();
-      console.log(data, "latest blogs");
-      console.log(trendingData, "trending blogs");
+      const { blogs: latestBlogs }: LatestBlogApiResp = await FetchLatestBlogs({
+        page: 1,
+      });
+      // const { blogs: trendingBlogs }: TrendingBlogApiResp =
+      //   await FetchTrendingBlogs();
+      if (latestBlogs) {
+        const formattedData: LocalBlogStateType = await filterPaginationData({
+          state: blogs!,
+          data: latestBlogs,
+          page: 1,
+          countRoute: "/all-latest-blogs-count",
+        });
+        if (Object.keys(formattedData).length > 0) {
+          setBlogs(formattedData);
+        }
+      }
     };
 
     callAPI();
@@ -46,7 +67,33 @@ const HomePage = () => {
             routes={[pageState, "trending blogs"]}
             defaultHidden={["trending blogs"]}
           >
-            <h1>Hello 2</h1>
+            <>
+              {blogs === null ? (
+                <Loader />
+              ) : blogs.results.length ? (
+                blogs.results.map((blog, idx) => {
+                  return (
+                    <AnimationWrapper
+                      key={idx}
+                      transition={{ duration: 1, delay: idx * 0.1 }}
+                    >
+                      <BlogPostCard
+                        content={blog}
+                        author={blog.author.personal_info}
+                      />
+                    </AnimationWrapper>
+                  );
+                })
+              ) : (
+                <NoDataMesasge message="No blogs published" />
+              )}
+              {/* <LoadMoreDataBtn
+                state={blogs}
+                fetchDataFun={
+                  pageState === "home" ? fetchLatestBlogs : fetchBlogsByCategory
+                }
+              /> */}
+            </>
           </InPageNavigation>
         </div>
         <div className="min-w-[40%] lg:min-w-[400px] max-w-min border-l border-grey pl-8 pt-3 max-md:hidden">
@@ -80,7 +127,7 @@ const HomePage = () => {
               {trendingBLogs === null ? (
                 <Loader />
               ) : trendingBLogs.length ? (
-                trendingBLogs.map((idx) => {
+                trendingBLogs.map((_, idx) => {
                   return (
                     <AnimationWrapper
                       key={idx}
