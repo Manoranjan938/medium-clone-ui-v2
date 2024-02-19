@@ -68,6 +68,16 @@ export interface BlogPostCardPropType {
 }
 
 export interface LoadMoreDataBtnPropType {
-  state: any;
+  state: LocalBlogStateType;
   fetchDataFun: any;
+}
+
+export interface FetchBlogsByCategoryReq {
+  tag: string;
+  page: number;
+}
+
+export interface NoBannerBlogPostPropType {
+  blog: TrendingBlogsResponse;
+  idx: number;
 }

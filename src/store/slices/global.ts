@@ -7,7 +7,7 @@ const initialState: GlobalModel = {
   loading: false,
 };
 
-export const globalReducer = createSlice({
+const globalReducer = createSlice({
   name: "global",
   initialState: initialState,
   reducers: {
@@ -19,3 +19,7 @@ export const globalReducer = createSlice({
     },
   },
 });
+
+export const { error, loading } = globalReducer.actions;
+
+export default globalReducer.reducer;

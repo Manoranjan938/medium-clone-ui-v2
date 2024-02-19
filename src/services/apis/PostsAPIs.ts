@@ -1,4 +1,7 @@
-import { FetchCountRequest } from "../../shared/types/PostsType";
+import {
+  FetchBlogsByCategoryReq,
+  FetchCountRequest,
+} from "../../shared/types/PostsType";
 import buildAxiosClient from "../clients/Axios";
 
 const client = buildAxiosClient();
@@ -20,5 +23,13 @@ export const FetchCount = async ({
 }: FetchCountRequest) => {
   const { data } = await client.post(countRoute, data_to_send);
 
+  return data;
+};
+
+export const FetchBlogsByCategory = async ({
+  page,
+  tag,
+}: FetchBlogsByCategoryReq) => {
+  const { data } = await client.post("/search-blogs", { tag, page });
   return data;
 };

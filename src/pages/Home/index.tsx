@@ -6,16 +6,18 @@ import NoDataMesasge from "../../components/NoData";
 import InPageNavigation from "../../components/InPageNavigation";
 import {
   FetchLatestBlogs,
-  // FetchTrendingBlogs,
+  FetchTrendingBlogs,
 } from "../../services/apis/PostsAPIs";
 import {
   LocalBlogStateType,
   LatestBlogApiResp,
-  // TrendingBlogApiResp,
+  TrendingBlogApiResp,
   TrendingBlogsResponse,
 } from "../../shared/types/PostsType";
 import { filterPaginationData } from "../../services/custom/filterPaginationData";
 import BlogPostCard from "./components/BlogPostCard";
+import LoadMoreDataBtn from "./components/LoadMoreDataBtn";
+import NoBannerBlogPost from "./components/NoBannerBlogPost";
 
 const HomePage = () => {
   const [blogs, setBlogs] = useState<LocalBlogStateType>({
@@ -23,7 +25,9 @@ const HomePage = () => {
     results: [],
     totalDocs: 0,
   });
-  const [trendingBLogs] = useState<TrendingBlogsResponse[]>([]);
+  const [trendingBLogs, setTrendingBlogs] = useState<TrendingBlogsResponse[]>(
+    [],
+  );
   const [pageState] = useState("home");
   const categories: string[] = [
     "programming",
@@ -36,27 +40,34 @@ const HomePage = () => {
     "travel",
   ];
 
-  useEffect(() => {
-    const callAPI = async () => {
-      const { blogs: latestBlogs }: LatestBlogApiResp = await FetchLatestBlogs({
+  const fetchLatestBlogs = async (page = 1) => {
+    const { blogs: latestBlogs }: LatestBlogApiResp = await FetchLatestBlogs({
+      page,
+    });
+    if (latestBlogs) {
+      const formattedData: LocalBlogStateType = await filterPaginationData({
+        state: blogs!,
+        data: latestBlogs,
         page: 1,
+        countRoute: "/all-latest-blogs-count",
       });
-      // const { blogs: trendingBlogs }: TrendingBlogApiResp =
-      //   await FetchTrendingBlogs();
-      if (latestBlogs) {
-        const formattedData: LocalBlogStateType = await filterPaginationData({
-          state: blogs!,
-          data: latestBlogs,
-          page: 1,
-          countRoute: "/all-latest-blogs-count",
-        });
-        if (Object.keys(formattedData).length > 0) {
-          setBlogs(formattedData);
-        }
+      if (Object.keys(formattedData).length > 0) {
+        setBlogs(formattedData);
       }
-    };
+    }
+  };
 
-    callAPI();
+  const fetchTrendingBlogs = async () => {
+    const { blogs: trendingBlogs }: TrendingBlogApiResp =
+      await FetchTrendingBlogs();
+    if (trendingBlogs.length > 0) {
+      setTrendingBlogs(trendingBlogs);
+    }
+  };
+
+  useEffect(() => {
+    fetchLatestBlogs();
+    fetchTrendingBlogs();
   }, []);
 
   return (
@@ -87,12 +98,10 @@ const HomePage = () => {
               ) : (
                 <NoDataMesasge message="No blogs published" />
               )}
-              {/* <LoadMoreDataBtn
+              <LoadMoreDataBtn
                 state={blogs}
-                fetchDataFun={
-                  pageState === "home" ? fetchLatestBlogs : fetchBlogsByCategory
-                }
-              /> */}
+                fetchDataFun={pageState === "home"}
+              />
             </>
           </InPageNavigation>
         </div>
@@ -127,14 +136,13 @@ const HomePage = () => {
               {trendingBLogs === null ? (
                 <Loader />
               ) : trendingBLogs.length ? (
-                trendingBLogs.map((_, idx) => {
+                trendingBLogs.map((blog, idx) => {
                   return (
                     <AnimationWrapper
                       key={idx}
                       transition={{ duration: 1, delay: idx * 0.1 }}
                     >
-                      {/* <MinimalBlogPost blog={blog} idx={idx} /> */}
-                      <h1>Hello</h1>
+                      <NoBannerBlogPost blog={blog} idx={idx} />
                     </AnimationWrapper>
                   );
                 })
