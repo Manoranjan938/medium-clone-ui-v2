@@ -1,10 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import AnimationWrapper from "../../shared/PageAnimation";
 import Loader from "../../components/Loader";
 import NoDataMesasge from "../../components/NoData";
-import InPageNavigation from "../../components/InPageNavigation";
+import InPageNavigation, {
+  activeTabRef,
+} from "../../components/InPageNavigation";
 import {
+  FetchBlogsByCategory,
   FetchLatestBlogs,
   FetchTrendingBlogs,
 } from "../../services/apis/PostsAPIs";
@@ -20,15 +23,16 @@ import LoadMoreDataBtn from "./components/LoadMoreDataBtn";
 import NoBannerBlogPost from "./components/NoBannerBlogPost";
 
 const HomePage = () => {
-  const [blogs, setBlogs] = useState<LocalBlogStateType>({
+  const initialBlogState = {
     page: 0,
     results: [],
     totalDocs: 0,
-  });
+  };
+  const [blogs, setBlogs] = useState<LocalBlogStateType>(initialBlogState);
   const [trendingBLogs, setTrendingBlogs] = useState<TrendingBlogsResponse[]>(
     [],
   );
-  const [pageState] = useState("home");
+  const [pageState, setPageState] = useState("home");
   const categories: string[] = [
     "programming",
     "food",
@@ -51,9 +55,7 @@ const HomePage = () => {
         page: 1,
         countRoute: "/all-latest-blogs-count",
       });
-      if (Object.keys(formattedData).length > 0) {
-        setBlogs(formattedData);
-      }
+      setBlogs(formattedData);
     }
   };
 
@@ -65,10 +67,50 @@ const HomePage = () => {
     }
   };
 
+  const fetchBlogsByCategory = async (page = 1) => {
+    const { blogs: blogbyCategory }: LatestBlogApiResp =
+      await FetchBlogsByCategory({ page, tag: pageState });
+    if (blogs) {
+      const formattedData = await filterPaginationData({
+        state: blogs,
+        data: blogbyCategory,
+        page,
+        countRoute: "/search-blogs-count",
+        // data_to_send: { tag: pageState },
+      });
+      setBlogs(formattedData);
+    }
+  };
+
+  const loadBlogByCategory = (e: MouseEvent) => {
+    if (e.target instanceof HTMLButtonElement) {
+      const category = e.target.innerHTML.toLowerCase();
+      setBlogs(initialBlogState);
+      if (pageState === category) {
+        setPageState("home");
+        return;
+      }
+      setPageState(category);
+    }
+  };
+
+  const fetchMoreBlogs = () => {
+    if (pageState === "home") {
+      fetchLatestBlogs(2);
+    } else {
+      fetchBlogsByCategory(2);
+    }
+  };
+
   useEffect(() => {
-    fetchLatestBlogs();
-    fetchTrendingBlogs();
-  }, []);
+    activeTabRef.current.click();
+    if (pageState === "home") {
+      fetchLatestBlogs();
+      fetchTrendingBlogs();
+    } else {
+      fetchBlogsByCategory();
+    }
+  }, [pageState]);
 
   return (
     <AnimationWrapper>
@@ -98,10 +140,25 @@ const HomePage = () => {
               ) : (
                 <NoDataMesasge message="No blogs published" />
               )}
-              <LoadMoreDataBtn
-                state={blogs}
-                fetchDataFun={pageState === "home"}
-              />
+              <LoadMoreDataBtn state={blogs} fetchDataFun={fetchMoreBlogs} />
+            </>
+            <>
+              {trendingBLogs === null ? (
+                <Loader />
+              ) : trendingBLogs.length ? (
+                trendingBLogs.map((blog, idx) => {
+                  return (
+                    <AnimationWrapper
+                      key={idx}
+                      transition={{ duration: 1, delay: idx * 0.1 }}
+                    >
+                      <NoBannerBlogPost blog={blog} idx={idx} />
+                    </AnimationWrapper>
+                  );
+                })
+              ) : (
+                <NoDataMesasge message="No trending blogs published" />
+              )}
             </>
           </InPageNavigation>
         </div>
@@ -120,7 +177,7 @@ const HomePage = () => {
                         (pageState === category ? "bg-black text-white" : "")
                       }
                       key={i}
-                      // onClick={lodBlogByCategory}
+                      onClick={(e: MouseEvent) => loadBlogByCategory(e)}
                     >
                       {category}
                     </button>

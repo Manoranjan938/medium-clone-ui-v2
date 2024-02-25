@@ -7,7 +7,7 @@ interface InPageNavProps {
   routes: string[];
   defaultHidden: string[];
   defaultActiveIndex?: number;
-  children: ReactElement;
+  children: ReactElement[];
 }
 
 export let activeTabLineRef: any;

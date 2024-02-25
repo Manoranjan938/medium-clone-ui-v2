@@ -8,7 +8,7 @@ export const filterPaginationData = async ({
   create_new_array = false,
   state,
   data,
-  //   page,
+  page,
   countRoute,
   data_to_send,
 }: FilterPaginationDataType) => {
@@ -17,15 +17,10 @@ export const filterPaginationData = async ({
     results: [],
     totalDocs: 0,
   };
-  if (state !== null && create_new_array) {
-    // obj = { ...state, results: [...state.results, data], page };
-  } else if (data_to_send) {
-    const { totalDocs } = await FetchCount({ countRoute, data_to_send });
-    if (totalDocs) {
-      obj = { results: data, page: 1, totalDocs };
-    }
+  if (state.results.length !== 0 && !create_new_array) {
+    obj = { ...state, results: [...state.results, ...data], page };
   } else {
-    const { totalDocs } = await FetchCount({ countRoute });
+    const { totalDocs } = await FetchCount({ countRoute, data_to_send });
     if (totalDocs) {
       obj = { results: data, page: 1, totalDocs };
     }
