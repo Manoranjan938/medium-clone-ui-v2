@@ -9,3 +9,7 @@ export interface SignInRequest {
   email: string;
   password: string;
 }
+
+export interface AuthPageType {
+  type: "sign-in" | "sign-up";
+}
