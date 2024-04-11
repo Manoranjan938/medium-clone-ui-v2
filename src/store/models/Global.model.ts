@@ -1,5 +1,9 @@
 export interface GlobalModel {
+  apiStatus: ApiStatusModel;
+}
+
+export interface ApiStatusModel {
   loading: boolean;
   isError: boolean;
-  error: string;
+  error: string | Error;
 }
