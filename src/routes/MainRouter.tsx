@@ -5,18 +5,48 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import Root from "./Root";
-import HomePage from "../pages/Home";
-import NotFound from "../pages/404";
-import UserAuth from "../pages/Auth";
+import { Suspense, lazy } from "react";
+
+const LazyHomePage = lazy(() => import("../pages/Home"));
+const LazyAuthPage = lazy(() => import("../pages/Auth"));
+const LazyNotFoundPage = lazy(() => import("../pages/404"));
 
 const MainRouter = () => {
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />}>
-        <Route index element={<HomePage />} />
-        <Route path="signin" element={<UserAuth type="sign-in" />} />
-        <Route path="signup" element={<UserAuth type="sign-up" />} />
-        <Route path="*" element={<NotFound />} />
+        <Route
+          index
+          element={
+            <Suspense fallback="Loading...">
+              <LazyHomePage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="signin"
+          element={
+            <Suspense fallback="Loading...">
+              <LazyAuthPage type="sign-in" />
+            </Suspense>
+          }
+        />
+        <Route
+          path="signup"
+          element={
+            <Suspense fallback="Loading...">
+              <LazyAuthPage type="sign-up" />
+            </Suspense>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            <Suspense fallback="loading...">
+              <LazyNotFoundPage />
+            </Suspense>
+          }
+        />
       </Route>,
     ),
   );
