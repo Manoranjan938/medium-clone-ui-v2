@@ -21,6 +21,7 @@ import { filterPaginationData } from "../../services/custom/filterPaginationData
 import BlogPostCard from "./components/BlogPostCard";
 import LoadMoreDataBtn from "./components/LoadMoreDataBtn";
 import NoBannerBlogPost from "./components/NoBannerBlogPost";
+import useAPIHook from "../../hooks/custom/useAPIHook";
 
 const HomePage = () => {
   const initialBlogState = {
@@ -33,6 +34,7 @@ const HomePage = () => {
     [],
   );
   const [pageState, setPageState] = useState("home");
+  const [apiCall] = useAPIHook();
   const categories: string[] = [
     "programming",
     "food",
@@ -45,9 +47,11 @@ const HomePage = () => {
   ];
 
   const fetchLatestBlogs = async (page = 1) => {
-    const { blogs: latestBlogs }: LatestBlogApiResp = await FetchLatestBlogs({
-      page,
-    });
+    const { blogs: latestBlogs }: LatestBlogApiResp = await apiCall(
+      FetchLatestBlogs({
+        page,
+      }),
+    );
     if (latestBlogs) {
       const formattedData: LocalBlogStateType = await filterPaginationData({
         state: blogs!,
@@ -61,15 +65,16 @@ const HomePage = () => {
 
   const fetchTrendingBlogs = async () => {
     const { blogs: trendingBlogs }: TrendingBlogApiResp =
-      await FetchTrendingBlogs();
+      await apiCall(FetchTrendingBlogs());
     if (trendingBlogs.length > 0) {
       setTrendingBlogs(trendingBlogs);
     }
   };
 
   const fetchBlogsByCategory = async (page = 1) => {
-    const { blogs: blogbyCategory }: LatestBlogApiResp =
-      await FetchBlogsByCategory({ page, tag: pageState });
+    const { blogs: blogbyCategory }: LatestBlogApiResp = await apiCall(
+      FetchBlogsByCategory({ page, tag: pageState }),
+    );
     if (blogs) {
       const formattedData = await filterPaginationData({
         state: blogs,

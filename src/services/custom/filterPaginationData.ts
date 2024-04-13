@@ -20,9 +20,9 @@ export const filterPaginationData = async ({
   if (state.results.length !== 0 && !create_new_array) {
     obj = { ...state, results: [...state.results, ...data], page };
   } else {
-    const { totalDocs } = await FetchCount({ countRoute, data_to_send });
-    if (totalDocs) {
-      obj = { results: data, page: 1, totalDocs };
+    const { data: countData } = await FetchCount({ countRoute, data_to_send });
+    if (countData.totalDocs) {
+      obj = { results: data, page: 1, totalDocs: countData.totalDocs };
     }
   }
 

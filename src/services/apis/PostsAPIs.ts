@@ -6,30 +6,24 @@ import buildAxiosClient from "../clients/Axios";
 
 const client = buildAxiosClient();
 
-export const FetchLatestBlogs = async ({ page = 1 }) => {
-  const { data } = await client.post("/latest-blogs", { page });
-  return data;
+export const FetchLatestBlogs = ({ page = 1 }) => {
+  return client.post("/latest-blogs", { page });
 };
 
-export const FetchTrendingBlogs = async () => {
-  const { data } = await client.get("/trending-blogs");
-
-  return data;
+export const FetchTrendingBlogs = () => {
+  return client.get("/trending-blogs");
 };
 
 export const FetchCount = async ({
   countRoute,
   data_to_send,
 }: FetchCountRequest) => {
-  const { data } = await client.post(countRoute, data_to_send);
-
-  return data;
+  return client.post(countRoute, data_to_send);
 };
 
 export const FetchBlogsByCategory = async ({
   page,
   tag,
 }: FetchBlogsByCategoryReq) => {
-  const { data } = await client.post("/search-blogs", { tag, page });
-  return data;
+  return client.post("/search-blogs", { tag, page });
 };
