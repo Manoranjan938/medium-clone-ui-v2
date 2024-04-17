@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Route,
   RouterProvider,
@@ -5,13 +6,34 @@ import {
   createRoutesFromElements,
 } from "react-router-dom";
 import Root from "./Root";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
+import { getFromLocalStorage } from "../utils/LocalStorage";
+import { loadAuthDetails } from "../store/slices/Auth.slice";
+import { UserDetails } from "../store/models/Auth.model";
+import { useDispatch } from "react-redux";
 
 const LazyHomePage = lazy(() => import("../pages/Home"));
 const LazyAuthPage = lazy(() => import("../pages/Auth"));
 const LazyNotFoundPage = lazy(() => import("../pages/404"));
 
 const MainRouter = () => {
+  const userData = getFromLocalStorage("user");
+  const dispatch = useDispatch();
+  const initialData: UserDetails = {
+    access_token: "",
+    fullname: "",
+    profile_img: "",
+    username: "",
+  };
+
+  useEffect(() => {
+    if (userData) {
+      dispatch(loadAuthDetails(JSON.parse(userData)));
+    } else {
+      dispatch(loadAuthDetails(initialData));
+    }
+  }, []);
+
   const router = createBrowserRouter(
     createRoutesFromElements(
       <Route path="/" element={<Root />}>

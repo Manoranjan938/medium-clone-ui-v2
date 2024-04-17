@@ -5,13 +5,18 @@ import { AuthPageType } from "../../shared/types/AuthType";
 
 import googleIcon from "../../assets/imgs/google.png";
 import InputBox from "../../components/Input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { MouseEvent } from "react";
 import { emailRegex, passwordRegex } from "../../shared/constants/constant";
 import { Auth } from "../../services/apis/AuthAPIS";
+import { useDispatch } from "react-redux";
+import { loadAuthDetails } from "../../store/slices/Auth.slice";
+import { storeInLocalStorage } from "../../utils/LocalStorage";
 
 const UserAuth = ({ type }: AuthPageType) => {
-  const handleSubmit = (e: MouseEvent) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const handleSubmit = async (e: MouseEvent) => {
     const serverRoute = type === "sign-in" ? "/signin" : "/signup";
     e.preventDefault();
 
@@ -42,7 +47,14 @@ const UserAuth = ({ type }: AuthPageType) => {
       return toast.error("Invalid password.");
     }
 
-    Auth(serverRoute, formData);
+    makeAuthentication(serverRoute, formData);
+  };
+
+  const makeAuthentication = async (route: any, reqData: any) => {
+    const { data } = await Auth(route, reqData);
+    storeInLocalStorage("user", JSON.stringify(data));
+    dispatch(loadAuthDetails(data));
+    navigate("/");
   };
 
   return (

@@ -2,7 +2,7 @@ export interface AuthModel {
   userDetails: UserDetails;
 }
 
-interface UserDetails {
+export interface UserDetails {
   access_token: string;
   fullname: string;
   profile_img: string;

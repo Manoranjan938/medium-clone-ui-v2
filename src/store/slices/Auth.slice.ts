@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { AuthModel } from "../models/Auth.model";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { AuthModel, UserDetails } from "../models/Auth.model";
 
 const initialState: AuthModel = {
   userDetails: {
@@ -14,10 +14,12 @@ const authReducers = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
-    loadAuthDetails(state, action) {
+    loadAuthDetails(state, action: PayloadAction<UserDetails>) {
       return { ...state, userDetails: action.payload };
     },
   },
 });
+
+export const { loadAuthDetails } = authReducers.actions;
 
 export default authReducers.reducer;
