@@ -2,14 +2,16 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../../assets/imgs/logo.png";
 import UserNaigationMenu from "../UserNavMenu";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 const Navbar = () => {
   const [searchBoxVisibility, setSearchBoxVisibility] = useState(false);
-
   const [userNavPanel, setUserNavPanel] = useState(false);
+  const { access_token, profile_img } = useSelector(
+    (state: RootState) => state.auth.userDetails,
+  );
   const navigate = useNavigate();
-  const access_token = "";
-  const profile_img = "";
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleSearchFunc = (e: any) => {
