@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 const LazyHomePage = lazy(() => import("../pages/Home"));
 const LazyAuthPage = lazy(() => import("../pages/Auth"));
 const LazyNotFoundPage = lazy(() => import("../pages/404"));
+const LazyEditorPage = lazy(() => import("../pages/Editor"));
 
 const MainRouter = () => {
   const userData = getFromLocalStorage("user");
@@ -36,40 +37,51 @@ const MainRouter = () => {
 
   const router = createBrowserRouter(
     createRoutesFromElements(
-      <Route path="/" element={<Root />}>
+      <>
         <Route
-          index
+          path="/editor"
           element={
-            <Suspense fallback="Loading...">
-              <LazyHomePage />
+            <Suspense>
+              <LazyEditorPage />
             </Suspense>
           }
         />
-        <Route
-          path="signin"
-          element={
-            <Suspense fallback="Loading...">
-              <LazyAuthPage type="sign-in" />
-            </Suspense>
-          }
-        />
-        <Route
-          path="signup"
-          element={
-            <Suspense fallback="Loading...">
-              <LazyAuthPage type="sign-up" />
-            </Suspense>
-          }
-        />
-        <Route
-          path="*"
-          element={
-            <Suspense fallback="loading...">
-              <LazyNotFoundPage />
-            </Suspense>
-          }
-        />
-      </Route>,
+        <Route path="/" element={<Root />}>
+          <Route
+            index
+            element={
+              <Suspense fallback="Loading...">
+                <LazyHomePage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="signin"
+            element={
+              <Suspense fallback="Loading...">
+                <LazyAuthPage type="sign-in" />
+              </Suspense>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <Suspense fallback="Loading...">
+                <LazyAuthPage type="sign-up" />
+              </Suspense>
+            }
+          />
+          <Route
+            path="*"
+            element={
+              <Suspense fallback="loading...">
+                <LazyNotFoundPage />
+              </Suspense>
+            }
+          />
+        </Route>
+        ,
+      </>,
     ),
   );
 

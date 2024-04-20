@@ -25,7 +25,7 @@ interface ActivityType {
   total_parent_comments: number;
 }
 
-interface AuthorType {
+export interface AuthorType {
   personal_info: UserInfo;
 }
 
