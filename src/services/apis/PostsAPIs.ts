@@ -14,14 +14,11 @@ export const FetchTrendingBlogs = () => {
   return client.get("/trending-blogs");
 };
 
-export const FetchCount = async ({
-  countRoute,
-  data_to_send,
-}: FetchCountRequest) => {
+export const FetchCount = ({ countRoute, data_to_send }: FetchCountRequest) => {
   return client.post(countRoute, data_to_send);
 };
 
-export const FetchBlogsByCategory = async ({
+export const FetchBlogsByCategory = ({
   page,
   tag,
 }: FetchBlogsByCategoryReq) => {

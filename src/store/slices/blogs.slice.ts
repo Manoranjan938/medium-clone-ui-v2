@@ -13,7 +13,7 @@ const initialState: BlogsModel = {
       tags: [],
       title: "",
     },
-    editorState: false,
+    editorState: "editor",
     textEditor: { isReady: false },
   },
 };

@@ -8,3 +8,9 @@ export interface NewBlogState {
   desc: string;
   author: AuthorType;
 }
+
+export interface FetchBlogDetailsReqState {
+  blog_id: string;
+  draft: boolean;
+  mode: string;
+}

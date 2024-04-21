@@ -41,7 +41,15 @@ const MainRouter = () => {
         <Route
           path="/editor"
           element={
-            <Suspense>
+            <Suspense fallback="Loading...">
+              <LazyEditorPage />
+            </Suspense>
+          }
+        />
+        <Route
+          path="/editor/:blog_id"
+          element={
+            <Suspense fallback="Loading...">
               <LazyEditorPage />
             </Suspense>
           }
