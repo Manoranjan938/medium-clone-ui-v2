@@ -13,4 +13,5 @@ export interface NewBlogDetails {
 
 interface TextEditorState {
   isReady: boolean;
+  editor: any;
 }

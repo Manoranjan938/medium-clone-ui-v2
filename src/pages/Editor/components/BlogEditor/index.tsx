@@ -1,19 +1,24 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Link } from "react-router-dom";
 
 import logo from "../../../../assets/imgs/logo.png";
 import defaultBanner from "../../../../assets/imgs/blog banner.png";
 
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import AnimationWrapper from "../../../../shared/PageAnimation";
-import { KeyboardEvent } from "react";
-import { useSelector } from "react-redux";
+import { KeyboardEvent, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../../store/store";
+import { updateEditor } from "../../../../store/slices/blogs.slice";
+import EditorJS from "@editorjs/editorjs";
 
 const BlogEditor = () => {
+  const dispatch = useDispatch();
   //Selecting blog data from redux state
   const {
-    blog: { banner, title },
+    blog: { banner, title, content },
+    textEditor,
   } = useSelector((state: RootState) => state.blog.newBlog);
 
   //Selecting auth data from redux state
@@ -23,7 +28,32 @@ const BlogEditor = () => {
 
   console.log(access_token, "access token");
 
-  const handlePublishEvent = () => {};
+  useEffect(() => {
+    return () => {
+      dispatch(
+        updateEditor(
+          new EditorJS({
+            holderId: "textEditorId",
+            data: Array.isArray(content) ? content[0] : content,
+            // tools: tools,
+            placeholder: "Let's write something",
+          }),
+        ),
+      );
+    };
+  }, []);
+
+  const handlePublishEvent = () => {
+    if (!banner.length) {
+      return toast.error("Upload a blog banner to publish it.");
+    }
+    if (!title.length) {
+      return toast.error("Add a title to publish it.");
+    }
+    if (textEditor.isReady) {
+      textEditor;
+    }
+  };
 
   const handleDraftEvent = () => {};
 
@@ -46,7 +76,10 @@ const BlogEditor = () => {
     input.style.height = input.scrollHeight + "px";
   };
 
-  const handleBannerUpload = () => {};
+  const handleBannerUpload = (e: any) => {
+    const file = e.target.file[0];
+    console.log(file);
+  };
 
   return (
     <>

@@ -14,14 +14,26 @@ const initialState: BlogsModel = {
       title: "",
     },
     editorState: "editor",
-    textEditor: { isReady: false },
+    textEditor: { isReady: false, editor: {} },
   },
 };
 
 const blogReducer = createSlice({
   name: "blog-details",
   initialState,
-  reducers: {},
+  reducers: {
+    updateEditor(state, action) {
+      return {
+        ...state,
+        newBlog: {
+          ...state.newBlog,
+          textEditor: { ...state.newBlog.textEditor, editor: action.payload },
+        },
+      };
+    },
+  },
 });
+
+export const { updateEditor } = blogReducer.actions;
 
 export default blogReducer.reducer;

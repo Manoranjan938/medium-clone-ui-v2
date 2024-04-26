@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AuthorType } from "./PostsType";
 
 export interface NewBlogState {
   title: string;
   banner: string;
-  content: [];
+  content: any[];
   tags: string[];
   desc: string;
   author: AuthorType;
